@@ -344,7 +344,7 @@ void clock_display_draw_mode_test(Hub75Driver *driver,
 	
 	
 	snprintf(line3, sizeof(line3),
-	         "%d dB",
+	         "%d#dB",
 	         dB_value);
 	
 	
@@ -354,7 +354,7 @@ void clock_display_draw_mode_test(Hub75Driver *driver,
         draw_string(*driver, 20, 22, line2, r_temp, g_temp, b_temp);
     } else {
         //draw_string(*driver, 20, 22, "T E", 255, 0, 0);
-		draw_string(*driver, 15, 22, line3, 255, 0, 0);
+		draw_string(*driver, 18, 22, line3, 255, 0, 0);
     }
 }
 

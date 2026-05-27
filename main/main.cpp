@@ -473,10 +473,10 @@ static uint8_t brightness_level_to_hub75(int level)
 
 static const ds3231_time_t default_time = {
     .second = 0,
-    .minute = 10,
-    .hour = 12,
-    .day_of_week = 3,
-    .day = 26,
+    .minute = 43,
+    .hour = 7,
+    .day_of_week = 4,
+    .day = 27,
     .month = 5,
     .year = 2026,
 };
@@ -817,18 +817,25 @@ void display_update_task(void* pvParameters)
 				
 				case MODE_TEST:
 				{
-				    fixed_item_t active_fixed_item = clock_modes_get_fixed_item();
-
-				    if (active_fixed_item == FIXED_ITEM_LOGO) {
-				        scroll_stop();
-				        clock_display_draw_logo(driver);
-				    } else {
+					/*
+					fixed_item_t active_fixed_item = clock_modes_get_fixed_item();
+					
+					if (active_fixed_item == FIXED_ITEM_LOGO) {
+					    scroll_stop();
+					    clock_display_draw_logo(driver);
+					} else {
 						clock_display_draw_mode_test(driver,
 						                          &now_copy,
 						                          temp_copy,
 						                          temp_valid_copy,
 						                          format_copy, dB_value);
-				    }
+					}
+					*/
+					clock_display_draw_mode_test(driver,
+					                          &now_copy,
+					                          temp_copy,
+					                          temp_valid_copy,
+					                          format_copy, dB_value);
 
 				    break;
 				}				
@@ -1638,7 +1645,7 @@ extern "C" void app_main(void)
 			double dbfs = rms_to_dbfs(rms);
 			double dbfs_a = rms_to_dbfs(rms_a);
 
-			double spl_db = dbfs + USER_CAL_OFFSET_DB;       // unweighted dB SPL
+			//si double spl_db = dbfs + USER_CAL_OFFSET_DB;       // unweighted dB SPL
 			double spl_dba = dbfs_a + USER_CAL_OFFSET_DBA;   // A-weighted dBA
 
 			if (spl_startup_skip > 0) {
@@ -1650,6 +1657,20 @@ extern "C" void app_main(void)
 			             spl_dba);
 			    continue;
 			}
+					 
+			dB_value = (int)(spl_dba + 0.5);
+			
+	        vTaskDelay(pdMS_TO_TICKS(LOG_INTERVAL_MS));		
+
+	    }		
+	
+}
+
+//Sine Wave 1000 Hz / 1 kHz for 1 hour - Test Tone
+
+
+
+
 
 /*
 double spl_dba_smooth = smooth_spl(spl_dba);
@@ -1673,54 +1694,14 @@ ESP_LOGI(TAG,
          spl_db,
          spl_dba,
          spl_dba_smooth);
-*/
-			
-					 
+		 
+		 
+		 double spl_dba_smooth = smooth_spl(spl_dba);
+		 ESP_LOGI(TAG,
+		          "SPL_A=%.1f dBA, meter=%.1f dBA",
+		          spl_dba,
+		          spl_dba_smooth);
 
-					 
-					 
-					 double spl_dba_smooth = smooth_spl(spl_dba);
-					 
-					 
-					 
-					 dB_value = (int)(spl_dba + 0.5);
-
-
-					 ESP_LOGI(TAG,
-					          "SPL_A=%.1f dBA, meter=%.1f dBA",
-					          spl_dba,
-					          spl_dba_smooth);	 
-					 
-					 
-					 
-					 
-					 
-					 
-					 
-					 
-					 
-
-
-	        vTaskDelay(pdMS_TO_TICKS(LOG_INTERVAL_MS));
-			
-
-	    }	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-}
-/*
 	int spl_display = (int)(spl_db_smooth + 0.5);
 	int leq_display = (int)(leq_db + 0.5);
 */
@@ -1751,3 +1732,4 @@ clock_protocol_init(&protocol_ctx);
 ESP_ERROR_CHECK(clock_ethernet_start_tcp_server(clock_protocol_rx_callback));
 */
 //====================================================================================================================================================//
+
