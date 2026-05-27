@@ -1,3 +1,3 @@
 CompileFlags:
-  CompilationDatabase: build
+  CompilationDatabase: C:\Users\Marlon\workspace\dB_meter_S3_P5\build
   Remove: [-m*, -f*]

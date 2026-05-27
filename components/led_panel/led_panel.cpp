@@ -144,17 +144,17 @@ int draw_string(Hub75Driver& drv,
 
     while (*str) {
 
-        // Use '#' as custom 4-pixel spacer
+        // Use '#' as custom 1-pixel spacer
         if (*str == '#') {
             if (bg_enable) {
-                for (int col = 0; col < 4; col++) {
+                for (int col = 0; col < 1; col++) {
                     for (int row = 0; row < FONT6x9_CHAR_H; row++) {
                         drv.set_pixel(x + col, y + row, bg_r, bg_g, bg_b);
                     }
                 }
             }
 
-            x += 4;
+            x += 1;
             str++;
             continue;
         }

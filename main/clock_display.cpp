@@ -302,6 +302,8 @@ void clock_display_draw_mode_test(Hub75Driver *driver,
     char line2[16];
 	
 	char line3[16];
+	
+	char line4[32];
 
     static char date_scroll_text[64];
 
@@ -346,12 +348,26 @@ void clock_display_draw_mode_test(Hub75Driver *driver,
 	snprintf(line3, sizeof(line3),
 	         "%d#dB",
 	         dB_value);
+			 
+			 
+			 
+/*
+snprintf(line4, sizeof(line4),
+         "%s %s",
+         line2, line3);
+*/
 	
 	
 	
 
     if (temp_valid) {
-        draw_string(*driver, 20, 22, line2, r_temp, g_temp, b_temp);
+        //draw_string(*driver, 20, 22, line2, r_temp, g_temp, b_temp);
+		//draw_string(*driver, 1, 22, line4, r_temp, g_temp, b_temp);
+		
+		draw_string(*driver, 2, 22, line2, r_temp, g_temp, b_temp);
+		draw_string(*driver, 35, 22, line3, 255, 0, 0);
+		
+		
     } else {
         //draw_string(*driver, 20, 22, "T E", 255, 0, 0);
 		draw_string(*driver, 18, 22, line3, 255, 0, 0);

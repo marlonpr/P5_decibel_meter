@@ -383,8 +383,8 @@ static uint8_t brightness_level_to_hub75(int level)
 
 static const ds3231_time_t default_time = {
     .second = 0,
-    .minute = 43,
-    .hour = 7,
+    .minute = 40,
+    .hour = 14,
     .day_of_week = 4,
     .day = 27,
     .month = 5,
