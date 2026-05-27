@@ -21,6 +21,15 @@
 
 #include "nvs.h"
 
+#include <stdint.h>
+#include <math.h>
+#include <stdint.h>
+#include <stdbool.h>
+#include "esp_log.h"
+#include "esp_check.h"
+
+#include "driver/i2s_std.h"
+
 #define ALARM_GPIO GPIO_NUM_48
 #define DS18B20_GPIO GPIO_NUM_39
 #define PIN_MENU GPIO_NUM_40
@@ -32,42 +41,12 @@
 #define BUTTON_REPEAT_DELAY_MS 500
 #define BUTTON_REPEAT_RATE_MS  500
 
+#define TAG2 "INMP441_TEST"
+
 //Assing a diferrent STATIC IP for each device in clock_ethernet.cpp
 //ip_info.ip.addr      = ESP_IP4TOADDR(192, 168, 10, 50); 50 for device 1, 51 for device 2 and so on
 
 static const char* TAG = "MAIN";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#include <stdint.h>
-#include <math.h>
-#include <inttypes.h>
-
-
-
-#include "esp_log.h"
-#include "esp_check.h"
-
-#include "driver/i2s_std.h"
-
-#define TAG2 "INMP441_TEST"
 
 /*
    ESP32-S3 GPIO connections:
@@ -77,20 +56,15 @@ static const char* TAG = "MAIN";
    INMP441 SD   -> GPIO 16  // I2S data input
    INMP441 VDD  -> 3.3V
    INMP441 GND  -> GND
-   INMP441 L/R  -> GND for LEFT channel
-   
+   INMP441 L/R  -> GND for LEFT channel   
    
    #define I2S_BCLK_IO      GPIO_NUM_17
    #define I2S_WS_IO        GPIO_NUM_18
-   #define I2S_DIN_IO       GPIO_NUM_16
-   
-   
+   #define I2S_DIN_IO       GPIO_NUM_16   
    
    #define I2S_BCLK_IO  GPIO_NUM_35
    #define I2S_WS_IO    GPIO_NUM_36
-   #define I2S_DIN_IO   GPIO_NUM_37
-   
-   
+   #define I2S_DIN_IO   GPIO_NUM_37   
 */
 
 #define I2S_BCLK_IO  GPIO_NUM_35 //SCK
@@ -99,23 +73,11 @@ static const char* TAG = "MAIN";
 
 #define SAMPLE_RATE_HZ   16000
 #define READ_FRAMES      2048
-
 #define LOG_INTERVAL_MS  250
-
-
-
-
 
 #define LOUD_THRESHOLD_DBFS      -32.0
 #define SPEECH_THRESHOLD_DBFS    -42.0
 #define QUIET_THRESHOLD_DBFS     -48.0
-
-
-
-
-#include <math.h>
-#include <stdint.h>
-#include <stdbool.h>
 
 #define MIC_FULL_SCALE_24BIT       8388607.0
 #define DBFS_FLOOR                -120.0
@@ -142,31 +104,10 @@ static const char* TAG = "MAIN";
    then offset = 60.0 - (-52.0) = 112.0
 */
 #define USER_CAL_OFFSET_DB             109.3 //INMP441_NOMINAL_CAL_OFFSET_DB
-
-
-
-
-
-
-
-
-
-
-
-
 #define SPL_ATTACK_ALPHA   0.70
 #define SPL_RELEASE_ALPHA  0.12
 
-
-
-
-
-
 int dB_value = 0;
-
-
-
-
 
 #define USER_CAL_OFFSET_DBA  105.0
 
@@ -236,10 +177,6 @@ static double a_weight_process(double x)
     return y;
 }
 
-
-
-
-
 static void test_a_weighting_filter(void)
 {
     double sum_sq = 0.0;
@@ -265,14 +202,6 @@ static void test_a_weighting_filter(void)
     ESP_LOGI(TAG, "A-weighting 1kHz test: rms=%.1f rmsA=%.1f gain=%.2f dB",
              rms, rms_a, gain_db);
 }
-
-
-
-
-
-
-
-
 
 #define DB_SMOOTH_ALPHA                 0.10
 #define STARTUP_SKIP_SAMPLES            5
@@ -307,11 +236,6 @@ static double smooth_spl(double spl)
 
     return spl_smooth;
 }
-
-
-
-
-
 
 
 /*
@@ -388,20 +312,6 @@ static int32_t convert_inmp441_sample(int32_t raw)
     */
     return raw >> 8;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1384,6 +1294,7 @@ static int startup_skip = 5;
 static double leq_accum_energy = 0.0;
 static int leq_count = 0;
 
+/*
 static bool leq_add_sample(double spl_db, double *leq_out)
 {
     leq_accum_energy += pow(10.0, spl_db / 10.0);
@@ -1398,6 +1309,7 @@ static bool leq_add_sample(double spl_db, double *leq_out)
 
     return false;
 }
+*/
 
 
 
@@ -1559,19 +1471,12 @@ extern "C" void app_main(void)
 	       buffer[2] = left sample
 	       buffer[3] = right sample
 	       ...
-	    */
+		   
+		   int64_t sum_sq = 0;
+		   double sum_sq_weighted = 0.0;
+	    */	
 		
-		int64_t sum_sq = 0;
-		double sum_sq_weighted = 0.0;
-		
-		
-		
-		
-		
-		
-		test_a_weighting_filter();
-		
-		
+		test_a_weighting_filter();	
 
 	    while (1) {
 	        size_t bytes_read = 0;
@@ -1662,8 +1567,7 @@ extern "C" void app_main(void)
 			
 	        vTaskDelay(pdMS_TO_TICKS(LOG_INTERVAL_MS));		
 
-	    }		
-	
+	    }	
 }
 
 //Sine Wave 1000 Hz / 1 kHz for 1 hour - Test Tone
