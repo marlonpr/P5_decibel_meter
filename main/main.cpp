@@ -1636,4 +1636,3 @@ clock_protocol_init(&protocol_ctx);
 ESP_ERROR_CHECK(clock_ethernet_start_tcp_server(clock_protocol_rx_callback));
 */
 //====================================================================================================================================================//
-
